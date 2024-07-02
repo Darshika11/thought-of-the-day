@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Thought of the Day</title>
+  <script>
+    function fetchThoughtAndTranslate() {
+      const thoughtAPI = 'https://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
+      const googleTranslateAPI = 'https://translation.googleapis.com/language/translate/v2';
+      const apiKey = 'YOUR_GOOGLE_TRANSLATE_API_KEY'; // Replace with your API key
+
+      fetch(thoughtAPI)
+        .then(response => response.json())
+        .then(data => {
+          const quoteText = data.quoteText;
+          const targetLanguage = document.getElementById('targetLanguage').value;
+          const translateUrl = `${googleTranslateAPI}?q=${encodeURIComponent(quoteText)}&target=${targetLanguage}&key=${apiKey}`;
+
+          fetch(translateUrl)
+            .then(response => response.json())
+            .then(translationData => {
+              document.getElementById('translatedQuote').innerText = translationData.data.translations[0].translatedText;
+            })
+            .catch(error => console.error('Error translating quote:', error));
+        })
+        .catch(error => console.error('Error fetching thought:', error));
+    }
+  </script>
+</head>
+<body onload="fetchThoughtAndTranslate()">
+  <h1>Thought of the Day</h1>
+  <select id="targetLanguage">
+    <option value="es">Spanish</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="zh">Chinese</option>
+    <!-- Add more languages as needed -->
+  </select>
+  <p id="translatedQuote">Translation will appear here...</p>
+</body>
+</html>
